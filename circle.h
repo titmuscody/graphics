@@ -52,7 +52,7 @@ class Circle {
     public:
     Point loc;
     Circle() {
-        int point_count = 15;
+        int point_count = 30;
         float step = 2 * M_PI / point_count;
         for(int i = 0; i < point_count; ++i) {
             float angle = i * step;
@@ -66,20 +66,27 @@ class Circle {
 
         glPushMatrix();                             // Save Matrixes
 
-//        glRotatef(rotation, 1.0, 0.0, 0.0);
         glTranslatef(loc.x, loc.y, 0.0);
         glScalef(0.25, 0.25, 0);
+         glRotatef(loc.x * 360, 0.0, 0.0, 1.0);
 
         glPolygonMode(GL_FRONT, GL_FILL);
         glPolygonMode(GL_BACK, GL_FILL);
 
-        glBegin(GL_POLYGON); {
-        // draw hourglassish polygon
-        vertexColor(green);
-        for(int i = 0; i < points.size(); ++i) {
-            Point p = points[i];
-            glVertex3f(p.x, p.y, p.z);
-        }
+//        glBegin(GL_POLYGON); {
+        glBegin(GL_TRIANGLE_FAN); {
+            vertexColor(red);
+            glVertex3f(0, 0, 0);
+            for(int i = 0; i < points.size(); ++i) {
+                if(i % 2 == 0)
+                    vertexColor(green);
+                else
+                    vertexColor(blue);
+                Point p = points[i];
+                glVertex3f(p.x, p.y, p.z);
+            }
+            vertexColor(green);
+            glVertex3f(points[0].x, points[0].y, 0);
         } glEnd();
 
         glPopMatrix();                              // Restore Matrixes
@@ -95,7 +102,7 @@ class Circle {
         }
         Point dest = destinations[0];
         Point diff = dest - loc;
-        if(diff.size() < .09) {
+        if(diff.size() < .05) {
             destinations.erase(destinations.begin());
             return;
         }

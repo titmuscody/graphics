@@ -112,7 +112,7 @@ void moveCircle(int _) {
     } else {
         circle.moveTowardsDestination();
     }
-    glutTimerFunc(100, moveCircle, 0);
+    glutTimerFunc(65, moveCircle, 0);
 }
 
 void redisplay(int _) {
@@ -146,11 +146,11 @@ void mouse(int button, int state, int x, int y) {
         glGetDoublev(GL_MODELVIEW_MATRIX, mvmatrix);
         glGetDoublev(GL_PROJECTION_MATRIX, projmatrix);/* note viewport[3] is height of window in pixels */
         realy = viewport[3] -(GLint) y -1;
-        printf("Coordinates at cursor are (%4d, %4d)\n",x, realy);
-        gluUnProject((GLdouble) x, (GLdouble) realy, 0.0,mvmatrix, projmatrix, viewport, &wx, &wy, &wz);
-        printf("World coords at z=0.0 are (%f, %f, %f)\n",wx, wy, wz);
+//        printf("Coordinates at cursor are (%4d, %4d)\n",x, realy);
+//        gluUnProject((GLdouble) x, (GLdouble) realy, 0.0,mvmatrix, projmatrix, viewport, &wx, &wy, &wz);
+//        printf("World coords at z=0.0 are (%f, %f, %f)\n",wx, wy, wz);
         gluUnProject((GLdouble) x, (GLdouble) realy, 1.0,mvmatrix, projmatrix, viewport, &wx, &wy, &wz);
-        printf("World coords at z=1.0 are (%f, %f, %f)\n",wx, wy, wz);
+//        printf("World coords at z=1.0 are (%f, %f, %f)\n",wx, wy, wz);
 
         circle.addDestination(wx, wy, 0);
         if(AniOn == 0) {
