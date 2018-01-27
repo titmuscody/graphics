@@ -1,7 +1,7 @@
 # Pre Project 1
 # Generate a simple Polygon
-proj1: proj1.c
-	gcc proj1.c -o proj1 glut32.lib -lGL -lglut
+proj1: proj1.cpp circle.h colors.h
+	g++ proj1.cpp -o proj1 glut32.lib -lGL -lglut -lGLU
 
 # Pre Project 1
 # Rotate a Polygon in X or Y direction based up
