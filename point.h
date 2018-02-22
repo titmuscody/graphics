@@ -1,5 +1,7 @@
 
 
+#ifndef POINT_H
+#define POINT_H
 
 class Point {
     public:
@@ -7,6 +9,9 @@ class Point {
     float y;
     float z;
     Point() {
+        x = 0;
+        y = 0;
+        z = 0;
     }
     Point(float nx, float ny, float nz) {
         x = nx;
@@ -31,3 +36,5 @@ class Point {
         return Point(x / mag, y / mag, z / mag);
     }
 };
+
+#endif
