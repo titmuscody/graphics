@@ -1,4 +1,4 @@
 #!/usr/bin/fish
-make
-./proj1
-rm proj1
+make proj2
+./proj2
+rm proj2
