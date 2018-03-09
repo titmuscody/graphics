@@ -67,7 +67,7 @@ void add_camera_movements() {
 
 void init() {
   Planet p = Planet(Point(4, 0, 8), 8, Point(0, 0, -7), new SurpriseFace());
-  p.moons.push_back(Planet(Point(2, 2, 0), 3, Point(), new SurpriseFace()));
+  p.moons.push_back(Planet(Point(2, 2, 0), 3, Point(), new AngryFace()));
   p.moons.push_back(Planet(Point(6, 6, 0), 8, Point(), new DevilFace()));
   planets.push_back(p);
 
@@ -78,7 +78,7 @@ void init() {
   p.time_offset = .5;
   p.moons.push_back(Planet(Point(3, 3, 0), 4, Point(), new AngryFace()));
   p.moons.push_back(Planet(Point(2, 2, 0), 3, Point(), new SurpriseFace()));
-  p.moons.push_back(Planet(Point(6, 6, 0), 8, Point(), new DevilFace()));
+  p.moons.push_back(Planet(Point(6, 6, 0), 8, Point(), new AngelFace()));
   planets.push_back(p);
 
   planets.push_back(Planet(Point(), -1, Point(), new Sun()));

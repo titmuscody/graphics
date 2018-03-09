@@ -82,6 +82,58 @@ class SurpriseFace : public Drawable {
     }
 };
 
+class AngelFace : public Drawable {
+    public:
+    void render(float time) {
+        // draw head
+        materialColor(yellowFace);
+        glutSolidSphere(.5, 20, 16);
+
+        // draw eyes
+        float x = .25;
+        float y = .1;
+        float z = .5;
+        float size = .15;
+
+        glPushMatrix();                             // Save Matrixes
+            glTranslatef(x, y, z);
+            materialColor(eye);
+            glutSolidSphere(size, 20, 16);
+            glPushMatrix();
+                glTranslatef(0, 0, size);
+                materialColor(pupil);
+                glutSolidSphere(.07, 20, 16);
+            glPopMatrix();
+        glPopMatrix();                              // Restore Matrixes
+        glPushMatrix();                             // Save Matrixes
+            glTranslatef(-x, y, z);
+            materialColor(eye);
+            glutSolidSphere(size, 20, 16);
+            glPushMatrix();
+                glTranslatef(0, 0, size);
+                materialColor(pupil);
+                glutSolidSphere(.07, 20, 16);
+            glPopMatrix();
+        glPopMatrix();                              // Restore Matrixes
+
+		// draw halo
+		glPushMatrix();
+			glTranslatef(0, .7, 0);
+			glRotatef(90, 1, 0, 0);
+			glScalef(1, 1, .25);
+			materialColor(eye);
+			glutSolidTorus(.3, .5, 30, 30);
+		glPopMatrix();
+        // draw mouth
+        glPushMatrix();
+        glTranslatef(0, -.2, .5);
+        materialColor(pupil);
+        glutSolidSphere(.1, 20, 16);
+        glPopMatrix();
+
+    }
+};
+
 class AngryFace : public Drawable {
     public:
     void render(float time) {
