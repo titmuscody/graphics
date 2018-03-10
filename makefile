@@ -6,6 +6,10 @@ proj2: proj2.cpp colors.h
 proj1: proj1.cpp circle.h colors.h
 	g++ proj1.cpp -o proj1 glut32.lib -lGL -lglut -lGLU
 
+
+fish: fish.c
+	g++ fish.c -o fish glut32.lib -lGL -lglut -lGLU
+
 # Pre Project 1
 # Rotate a Polygon in X or Y direction based up
 # left or right mouse click
