@@ -70,6 +70,9 @@ class Camera {
     Point get_position() {
         return Point(getx(), gety(), getz());
     }
+    Point get_orientation() {
+        return Point(0, 0, 0);
+    }
     bool done_moving() {
         return destinations.size() == 0 && passed_time > anim_time;
     }

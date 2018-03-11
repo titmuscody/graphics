@@ -35,6 +35,17 @@ class Point {
         float mag = size();
         return Point(x / mag, y / mag, z / mag);
     }
+		Point cross(Point r) {
+			Point res;
+			res.x = y * r.z - r.y * z;
+			res.y = r.x * z - x * r.z;
+			res.z = x * r.y - r.x * y;
+			return res;
+		}
+		static Point normal(Point one, Point two, Point three) {
+			Point res = (one - two).cross(two - three);
+			return res.unitVector();
+		}
 };
 
 #endif
