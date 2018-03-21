@@ -11,6 +11,9 @@
 #include "colors.h"
 #include "camera.h"
 #include "fish.h"
+#include "spiral.h"
+#include "pyramid.h"
+#include "glass.h"
 
 /*
   Hidden Surface Removal Steps:
@@ -46,18 +49,63 @@ GLfloat spot_direction[] = {0.0, 0.0, -1.0};
 GLfloat globalAmbientLight[] = {0.15, 0.15, 0.15, 1.0};
 
 Camera cam = Camera(Point(0, 0, 15));
-std::vector<Planet> planets;
+Fish* movFish;
+Fish* attackFish;
+Spiral* spiral;
+Glass* glass;
+std::vector<Drawable*> objects;
+GLuint scaleTex;
 
 void add_camera_movements() {
-    cam.move_to(Point(15, 0, 0), 5);
-    cam.move_to(Point(0, 0, 15), 5);
-    cam.move_to(Point(0, 0, 5), 5);
-    cam.move_to(Point(0, 0, -15), 5);
+    //cam.move_to(Point(0, 0, 5), 5);
+    //cam.move_to(Point(5, 0, -5), 5);
+    //cam.move_to(Point(0, 0, 5), 5);
+    //cam.move_to(Point(0, 0, -15), 5);
+}
+
+void breakGlass(int i) {
+	glass->brake();
+}
+
+void init_objects(int none) {
+	objects = vector<Drawable*>();
+
+	Drawable* pyr = new Pyramid();
+	pyr = new SpinDrawable(pyr, .9, false);
+	pyr = new MovingDrawable(pyr, new OffsetMover(Point(-3, 0, 0)));
+	objects.push_back(pyr);
+
+	Drawable* fish = new Fish(scaleTex);
+	//attackFish = fish;
+	fish = new SpinDrawable(fish, 4, true);
+	CompMover* comp = new CompMover();
+	comp->add(new OffsetMover(Point(3, 0, 0)), 4);
+
+	comp->add(new PathMover(Point(3, 0, 0), Point(0, 0, 12), 4), 4);
+	
+	fish = new MovingDrawable(fish, comp);
+
+	objects.push_back(fish);
+
+	
+	Fish* d = new Fish(scaleTex);
+	movFish = d;
+	spiral = new Spiral(10);
+	//MovingDrawable* fishObject = new MovingDrawable(d, );
+	//d->lookat(Point(0, 1, 0));
+	//objects.push_back(fishObject);
+
+	glass = new Glass();
+	Drawable* g = glass;
+	g = new MovingDrawable(g, new OffsetMover(Point(0, -1, 10)));
+	objects.push_back(g);
+
+  glutTimerFunc(7000, breakGlass, 0);
+  glutTimerFunc(9000, init_objects, 0);
 }
 
 void init() {
 
-	GLuint scaleTex;
   char const* tfile = "Colorful-Fish-scale.raw";
   int width = 512;
   int height = width;
@@ -120,10 +168,7 @@ void init() {
 	       bits); 
 
 
-
-
-
-  planets.push_back(Planet(Point(), -1, Point(), new Fish(scaleTex)));
+	init_objects(0);
 
   add_camera_movements();
 
@@ -162,35 +207,31 @@ void move(int i) {
   if(cam.done_moving()) {
     add_camera_movements();
   }
+	Point pos = spiral->get_position(.06);
+	pos = pos + Point(0, -10, -20);
+	movFish->lookat(pos);
+	movFish->setPos(pos);
   glutPostRedisplay();
 }
 
+
 void display() {
-  GLfloat cx, cy, cz = 0.0;      // X, Y, Z position of planet
 
   glClear(GL_COLOR_BUFFER_BIT | 
       GL_DEPTH_BUFFER_BIT);  // clear color and depth buffer
-
-//  glEnable(GL_COLOR_MATERIAL);   // Using glColorMaterial allows planets
-                                 // to just use the color set by
-                                 // glColor as a material setting
 
   glPushMatrix();
   cam.update_position(.06);
   Point c = cam.get_position();
 	Point l = cam.get_orientation();
-  gluLookAt(c.x, c.y, c.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+  gluLookAt(c.x, c.y, c.z, l.x, l.y, l.z, 0.0, 1.0, 0.0);
 
-
-//  float time_diff = get_time_passed();
-  for(int i = 0; i < planets.size(); ++i) {
-    planets[i].render(.06);
+  for(int i = 0; i < objects.size(); ++i) {
+    objects[i]->render(.06);
   }
-
+	movFish->render(.06);
 
   glPopMatrix(); // Pop off the look matrix
-
-//  glDisable(GL_COLOR_MATERIAL);         // Turn off glColorMaterial
 
   glutSwapBuffers();
   glutTimerFunc(70, move, 0);

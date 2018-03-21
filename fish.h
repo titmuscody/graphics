@@ -1,20 +1,39 @@
 #ifndef FISH_H
 #define FISH_H
 
+#include "math.h"
+
 #include "colors.h"
 
 class Fish: public Drawable {
 	public:
-		void render(float time) {
-			drawBody(1.0, 3.0, 15, 15);
-			drawEye();
-			drawTail();
+		void render(float time) override {
+			glPushMatrix();
+				glTranslatef(loc.x, loc.y, loc.z);
+				glRotatef(rot, rotPoint.x, rotPoint.y, rotPoint.z);
+				drawBody(1.0, 3.0, 15, 15);
+				drawEye();
+				drawTail();
+			glPopMatrix();
     }
+		void lookat(Point here) {
+			Point looking = (here - loc).unitVector();
+			Point start = Point(0, 0, 1);
+			Point crossed = start.cross(looking);
+			rotPoint = crossed;
+			rot = (180 / M_PI) * acos(Point::dot(start, looking));
+		}
+		void setPos(Point here) {
+			loc = here;
+		}
 		Fish(GLuint tex) {
 			scaleTex = tex;
 		}
 	private:
 		GLuint scaleTex;
+		GLfloat rot;
+		Point rotPoint;
+		Point loc;
 		void drawTail() {
 			glEnable(GL_COLOR_MATERIAL);
 			glPolygonMode( GL_FRONT , GL_FILL);
@@ -93,7 +112,6 @@ class Fish: public Drawable {
 
 		void drawBody(GLfloat r1, GLfloat r2, int cuts, int stacks)
 		{
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 			glEnable(GL_TEXTURE_2D);                                   // Enable 2D texture mapping
 
