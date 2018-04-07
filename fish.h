@@ -4,6 +4,10 @@
 #include "math.h"
 
 #include "colors.h"
+#include "wall.h"
+#include "enemy.h"
+
+using std::vector;
 
 class Fish: public Drawable {
 	public:
@@ -19,8 +23,7 @@ class Fish: public Drawable {
 		void lookat(Point here) {
 			Point looking = (here - loc).unitVector();
 			Point start = Point(0, 0, 1);
-			Point crossed = start.cross(looking);
-			rotPoint = crossed;
+			rotPoint = start.cross(looking);
 			rot = (180 / M_PI) * acos(Point::dot(start, looking));
 		}
 		void setPos(Point here) {
@@ -29,11 +32,63 @@ class Fish: public Drawable {
 		Fish(GLuint tex) {
 			scaleTex = tex;
 		}
+		void updateDir(vector<Fish*> fishes, vector<Wall*> walls, vector<Enemy*> enemies) {
+			Point last_dir = dir;
+			
+			for(int i = 0; i < walls.size(); ++i) {
+				Wall wall = *walls[i];
+				float dist = Point::dot(wall.dir, loc - wall.loc);
+				if(dist < 15) {
+					float power =  1.0 / pow(dist, 1);
+					if(repel) {
+						last_dir = last_dir + (power * wall.dir);
+					} else {
+						last_dir = last_dir + (.15 * power * wall.dir);
+					}
+				}
+			}
+			for(int i = 0; i < fishes.size(); ++i) {
+				Fish* cur = fishes[i];
+				if(cur == this)
+					continue;
+				float dist = (loc - cur->loc).size();
+				if(repel) {
+					Point goto_here = loc - cur->loc;
+					last_dir = last_dir + (.001 * goto_here);
+				} else if(dist < 6) {
+					Point goto_here = loc - cur->loc;
+					last_dir = last_dir + (.01 * goto_here);
+				} else if(dist < 8) {
+					last_dir = last_dir + (.01 * cur->dir);
+				}
+			}
+			for(int i = 0; i < enemies.size(); ++i) {
+				Enemy* cur = enemies[i];
+				float dist = (loc - cur->loc).size() - cur->radius;
+				if(dist < 5) {
+					Point goto_here = loc - cur->loc;
+					last_dir = last_dir + (.01 * goto_here);
+				}
+			}
+
+			this->dir = last_dir.unitVector();
+		}
+		void move() override {
+			Point dest = loc + (speed * dir);
+			lookat(dest);
+			setPos(dest);
+		}
+		void repulse() {
+			repel = !repel;
+		}
+		Point dir = Point(0.001, .00001, -1).unitVector();
 	private:
 		GLuint scaleTex;
 		GLfloat rot;
 		Point rotPoint;
 		Point loc;
+		float speed = .2;
+		bool repel = false;
 		void drawTail() {
 			glEnable(GL_COLOR_MATERIAL);
 			glPolygonMode( GL_FRONT , GL_FILL);

@@ -9,6 +9,7 @@ using std::vector;
 class Drawable {
 	public:
 		virtual void render(float) = 0;
+		virtual void move() {}
 };
 
 class Mover {
