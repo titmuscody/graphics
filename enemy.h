@@ -15,7 +15,7 @@ class Enemy: public Drawable {
 				//glTranslatef(loc.x, loc.y, loc.z);
 				//glRotatef(rot, rotPoint.x, rotPoint.y, rotPoint.z);
 				vertexColor(orange);
-				glutSolidSphere(radius, 10, 10);
+				glutSolidSphere(radius, 20, 20);
 			glPopMatrix();
     }
 		void move() override {

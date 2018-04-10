@@ -251,7 +251,7 @@ void display() {
   glPopMatrix(); // Pop off the look matrix
 
   glutSwapBuffers();
-  glutTimerFunc(40, move, 0);
+  glutTimerFunc(20, move, 0);
 }
 
 
@@ -295,7 +295,7 @@ void keyboard(unsigned char key, int x, int y) {
 int main(int argc, char** argv) {
   glutInit(&argc, argv);
   glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB | GLUT_DEPTH);
-  glutInitWindowSize(500, 850);
+  glutInitWindowSize(800, 850);
   glutInitWindowPosition(0, 0);
   glutCreateWindow("Fish Tank");
 

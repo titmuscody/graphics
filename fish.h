@@ -12,12 +12,33 @@ using std::vector;
 class Fish: public Drawable {
 	public:
 		void render(float time) override {
+			anim_time += time;
+			if(anim_time > 2) {
+				anim_time -= 2;
+			}
 			glPushMatrix();
 				glTranslatef(loc.x, loc.y, loc.z);
 				glRotatef(rot, rotPoint.x, rotPoint.y, rotPoint.z);
 				drawBody(1.0, 3.0, 15, 15);
 				drawEye();
-				drawTail();
+				//draw tail
+				glPushMatrix();
+					glTranslatef(0.0, 0.0, -3);
+					drawTail(anim_time / 2.0f);
+				glPopMatrix();
+				//draw right fin
+				glPushMatrix();
+					glTranslatef(1.2, 0.5, 0.0);
+					glScalef(1, 0.5, 1);
+					drawTail(anim_time / 2.0f);
+				glPopMatrix();
+				//draw left fin
+				glPushMatrix();
+					glTranslatef(-1.2, 0.5, 0.0);
+					glRotatef(180, 0, 0, 1);
+					glScalef(1, 0.5, 1);
+					drawTail(anim_time / 2.0f);
+				glPopMatrix();
 			glPopMatrix();
     }
 		void lookat(Point here) {
@@ -54,10 +75,11 @@ class Fish: public Drawable {
 				float dist = (loc - cur->loc).size();
 				if(repel) {
 					Point goto_here = loc - cur->loc;
-					last_dir = last_dir + (.001 * goto_here);
+					last_dir = last_dir + (.000001 * goto_here);
 				} else if(dist < 6) {
+					float power =  1.0 / pow(dist, 3);
 					Point goto_here = loc - cur->loc;
-					last_dir = last_dir + (.01 * goto_here);
+					last_dir = last_dir + (power * .01 * goto_here);
 				} else if(dist < 8) {
 					last_dir = last_dir + (.01 * cur->dir);
 				}
@@ -65,9 +87,10 @@ class Fish: public Drawable {
 			for(int i = 0; i < enemies.size(); ++i) {
 				Enemy* cur = enemies[i];
 				float dist = (loc - cur->loc).size() - cur->radius;
-				if(dist < 5) {
+				if(dist < 20) {
+					float power =  1.0 / pow(dist, 4);
 					Point goto_here = loc - cur->loc;
-					last_dir = last_dir + (.01 * goto_here);
+					last_dir = last_dir + (power * goto_here);
 				}
 			}
 
@@ -89,51 +112,44 @@ class Fish: public Drawable {
 		Point loc;
 		float speed = .2;
 		bool repel = false;
-		void drawTail() {
+		float anim_time = 0;
+		void drawTail(float done) {
+			float x_offset;
+			float z_offset;
+			if(done > .5) {
+				x_offset = cos((1 - done) * 2 * M_PI);
+				z_offset = sin((1 - done) * 2 * M_PI);
+			} else {
+				x_offset = cos(done * 2 * M_PI);
+				z_offset = sin(done * 2 * M_PI);
+			}
+
 			glEnable(GL_COLOR_MATERIAL);
 			glPolygonMode( GL_FRONT , GL_FILL);
 			glPolygonMode( GL_BACK, GL_FILL);
 
-			glPushMatrix();
-			glTranslatef(0.0, 0.0, -3);
 			glBegin(GL_TRIANGLE_FAN); {
 				vertexColor(red);
 				glNormal3f(1.0, 0.0, 0.0);
 				glVertex3f(0.0, 0.0, 0.0); // v0
-				glNormal3f(1.3, 0.0, 0.0);
+
 				vertexColor(blue);
-				glVertex3f(0.0, 1.0, -2.75); // v1
+				glNormal3f(1.3, 0.0, 0.0);
+				glVertex3f(0.0 + x_offset, 1.0, -2.75 + z_offset); // v1
+
 				vertexColor(yellow);
-				glVertex3f(0.1, 0.6, -2.95); // v2
+				glVertex3f(0.1 + x_offset, 0.6, -2.95 + z_offset); // v2
+
 				vertexColor(green);
 				glNormal3f(0.85, 0.0, 0.0);
-				glVertex3f(0.0, 0.0, -2.65); // v3
-				vertexColor(yellow);
-				glVertex3f(0.1,-0.9, -2.95); // v4
-				vertexColor(green);
-				glVertex3f(0.0, -1.5, -2.75); // v5 
-			} glEnd();
+				glVertex3f(0.0 + x_offset, 0.0, -2.65 + z_offset); // v3
 
-			glBegin(GL_TRIANGLE_FAN); {
-				glColor3f(green.r, green.g, green.b);
-				glNormal3f(-1.0, 0.0, 0.0);
-				glVertex3f(0.0, 0.0, 0.0); // v0
-				glColor3f(yellow.r, yellow.g, yellow.b);
-				glNormal3f(-1.0, 0.0, 0.0);
-				glVertex3f(0.0, -1.5, -2.75); // v1
-				glColor3f(green.r, green.g, green.b);
-				glVertex3f(-0.1,-0.9, -2.95); // v2
-				glColor3f(red.r, red.g, red.b);
-				glNormal3f(-0.85, 0.0, 0.0);
-				glVertex3f(0.0, 0.0, -2.65); // v3
-				glColor3f(green.r, green.g, green.b);
-				glNormal3f(-1.3, 0.0, 0.0);
-				glVertex3f(-0.1, 0.6, -2.95); // v4
-				glColor3f(blue.r, blue.g, blue.b);
-				glNormal3f(-1.0, 0.0, 0.0);
-				glVertex3f(0.0, 1.0, -2.75); // v5
+				vertexColor(yellow);
+				glVertex3f(0.1 + x_offset,-0.9, -2.95 + z_offset); // v4
+
+				vertexColor(green);
+				glVertex3f(0.0 + x_offset, -1.5, -2.75 + z_offset); // v5 
 			} glEnd();
-			glPopMatrix();
 		}
 		void drawEye() {
 			glEnable(GL_COLOR_MATERIAL);
