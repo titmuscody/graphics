@@ -54,6 +54,7 @@ static Color orange = Color(1, 140.0/255.0, 0);
 static Color grey = Color(140.0/255.0, 140.0/255.0, 140.0/255.0);
 static Color yellow = Color(1.0, 1.0, 0);
 static Color purple = Color(210.0/255.0, 157.0/255.0, 239.0/255.0);
+static Color brown = Color(156.0/255.0, 49.0/255.0, 24.0/255.0);
 
 static Color yellowFace = Color(1, 1, 0, .2, .2, .2, .9, .9, .9);
 static Color madFace = Color(1, 0, 0, .2, .2, .2, .4, .4, .4);

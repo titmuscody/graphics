@@ -1,5 +1,8 @@
 # Pre Project 1
 # Generate a simple Polygon
+proj5: proj5.cpp colors.h point.h level.h ball.h
+	g++ proj5.cpp -std=c++11 -o proj5 glut32.lib -lGL -lglut -lGLU
+
 proj4: proj4.cpp colors.h fish.h point.h wall.h
 	g++ proj4.cpp -std=c++11 -o proj4 glut32.lib -lGL -lglut -lGLU
 
